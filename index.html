@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixora - Adjusted UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        [x-cloak] { display: none !important; }
+        .app-frame { width: 375px; height: 780px; border-radius: 45px; border: 12px solid #1a1a1a; overflow: hidden; position: relative; box-shadow: 0 50px 100px -20px rgba(0,0,0,0.6); transition: all 0.5s ease; }
+        
+        /* Light Backgrounds */
+        .bg-admin { background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%); }
+        .bg-user { background: linear-gradient(180deg, #fdf4ff 0%, #fae8ff 100%); }
+        .bg-provider { background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%); }
+
+        /* Premium Gradients */
+        .grad-purple { background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%); }
+        .grad-dark { background: linear-gradient(135deg, #1F2937 0%, #111827 100%); }
+        .grad-red { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); }
+        
+        /* Highlights & Glows */
+        .glow-purple { box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4); }
+        .nav-home-glow { box-shadow: 0 0 25px rgba(139, 92, 246, 0.5); border: 4px solid white; }
+        .btn-click:active { transform: scale(0.92); }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-slate-950 flex justify-center items-center min-h-screen p-4">
+
+    <div class="app-frame flex flex-col" 
+         :class="page === 'landing' ? 'bg-white' : (role === 'admin' ? 'bg-admin' : (role === 'user' ? 'bg-user' : 'bg-provider'))"
+         x-data="{ 
+            page: 'landing',
+            role: '',
+            selectedFeature: null,
+            features: {
+                admin: [
+                    {n: 'Login', i: 'fa-right-to-bracket', sub: ['Security Keys', 'Session Monitor', 'IP Whitelist']},
+                    {n: 'Profiles', i: 'fa-id-card', sub: ['Edit Permissions', 'Activity Log', 'Admin Tags', 'Logout Session']},
+                    {n: 'Users', i: 'fa-users', sub: ['KYC Pending', 'Ban List', 'User Growth']},
+                    {n: 'Providers', i: 'fa-user-tie', sub: ['Work Permits', 'Skill Audit', 'Rankings']},
+                    {n: 'Verification', i: 'fa-user-check', sub: ['Document Review', 'Facial Match', 'Address']},
+                    {n: 'Services', i: 'fa-gears', sub: ['Tax Config', 'Global Rates', 'Custom Fields']},
+                    {n: 'Locations', i: 'fa-map-location-dot', sub: ['Zone Mapping', 'Area Demand', 'Live Map']},
+                    {n: 'Pricing', i: 'fa-tags', sub: ['Surge Pricing', 'Promo Engine', 'Currency']},
+                    {n: 'Bookings', i: 'fa-calendar-check', sub: ['Dispute Centre', 'Force Cancel', 'Schedules']},
+                    {n: 'Complaints', i: 'fa-circle-exclamation', sub: ['Live Tickets', 'Escalations', 'History']},
+                    {n: 'Reports', i: 'fa-chart-line', sub: ['Net Profit', 'Active Pros', 'Churn Rate']},
+                    {n: 'Notifications', i: 'fa-bell', sub: ['Mass Push', 'System Banner', 'Alerts']}
+                ],
+                user: [
+                    {n: 'Login', i: 'fa-door-open', sub: ['Biometrics', 'Linked Accounts', 'Trusted Dev']},
+                    {n: 'Profile', i: 'fa-user-circle', sub: ['Personal Info', 'My Reviews', 'Coupons', 'Logout']},
+                    {n: 'Location', i: 'fa-location-crosshairs', sub: ['Saved Places', 'Live Tracker', 'Geo-Fence']},
+                    {n: 'Search', i: 'fa-magnifying-glass', sub: ['Smart Filters', 'Voice Search', 'Recent']},
+                    {n: 'Providers', i: 'fa-address-book', sub: ['Top Matches', 'Verified Near', 'Best Price']},
+                    {n: 'Booking', i: 'fa-plus-circle', sub: ['Express Book', 'Cart Items', 'Add Notes']},
+                    {n: 'Cancellation', i: 'fa-xmark-circle', sub: ['Refund Request', 'Reschedule', 'Help']},
+                    {n: 'Payment', i: 'fa-credit-card', sub: ['Wallet', 'Apple/Google Pay', 'Invoices']},
+                    {n: 'Notification', i: 'fa-bell', sub: ['Offer Alerts', 'Status Update', 'Settings']},
+                    {n: 'Rating', i: 'fa-star', sub: ['Write Feedback', 'Star Perks', 'Share Review']},
+                    {n: 'Complaints', i: 'fa-headset', sub: ['Chat with Support', 'Status', 'FAQ']},
+                    {n: 'History', i: 'fa-clock-rotate-left', sub: ['Job Details', 'Repeat Order', 'Receipts']}
+                ],
+                provider: [
+                    {n: 'Login', i: 'fa-lock', sub: ['Agency Login', 'Safety Check', 'Forgot PIN']},
+                    {n: 'Profile', i: 'fa-briefcase', sub: ['Skills Update', 'Work Bio', 'Photos', 'Logout Account']},
+                    {n: 'Availability', i: 'fa-toggle-on', sub: ['Work Mode', 'Vacation Set', 'Hours']},
+                    {n: 'Requests', i: 'fa-hand-paper', sub: ['Direct Leads', 'Auction List', 'Bids']},
+                    {n: 'Bookings', i: 'fa-calendar-days', sub: ['Task Roadmap', 'Client Info', 'Map']},
+                    {n: 'Completion', i: 'fa-circle-check', sub: ['Before/After', 'Job Summary', 'OTP']},
+                    {n: 'Pricing', i: 'fa-dollar-sign', sub: ['Fixed Price', 'Add-on Fees', 'Tax Form']},
+                    {n: 'Reviews', i: 'fa-comment-dots', sub: ['Star Rating', 'Badge Status', 'Replies']},
+                    {n: 'Payment', i: 'fa-wallet', sub: ['Instant Payout', 'Earning Graph', 'Bank']},
+                    {n: 'Notification', i: 'fa-comment-dots', sub: ['Client Inbox', 'Broadcast', 'Urgent']},
+                    {n: 'Services', i: 'fa-tools', sub: ['Categories', 'Travel Radius', 'Kit']},
+                    {n: 'Feedback', i: 'fa-heart', sub: ['Top Feedback', 'Awards', 'Points']}
+                ]
+            }
+        }">
+
+        <div x-show="page === 'landing'" x-transition class="flex-1 flex flex-col p-10 items-center justify-center text-center">
+            <div class="w-24 h-24 grad-purple rounded-[32px] flex items-center justify-center mb-8 glow-purple animate-bounce">
+                <i class="fa-solid fa-house-circle-check text-4xl text-white"></i>
+            </div>
+            <h1 class="text-4xl font-black text-slate-900 tracking-tighter">Fix<span class="text-purple-600 underline decoration-pink-500">ora</span></h1>
+            <p class="text-slate-400 mt-3 text-sm font-semibold">Everything you need, in one app.</p>
+            
+            <div class="mt-12 space-y-4 w-full">
+                <button @click="role='admin'; page='dashboard'" class="btn-click w-full py-4 grad-dark text-white rounded-2xl font-black flex items-center justify-center gap-3 shadow-xl">
+                    <i class="fa-solid fa-crown text-amber-400"></i> Admin Panel
+                </button>
+                <button @click="role='user'; page='dashboard'" class="btn-click w-full py-4 grad-purple text-white rounded-2xl font-black glow-purple flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-circle-user"></i> User Experience
+                </button>
+                <button @click="role='provider'; page='dashboard'" class="btn-click w-full py-4 bg-white border-2 border-purple-600 text-purple-600 rounded-2xl font-black flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-screwdriver-wrench"></i> Provider Hub
+                </button>
+            </div>
+        </div>
+
+        <div x-show="page === 'dashboard'" x-cloak class="flex-1 flex flex-col relative h-full">
+            
+            <header class="bg-white/80 backdrop-blur-md px-8 pt-12 pb-6 flex flex-col border-b border-slate-200">
+                <span :class="role === 'admin' ? 'bg-slate-900' : 'bg-purple-600'" class="w-max px-2 py-0.5 rounded text-[8px] font-black text-white uppercase mb-1" x-text="role"></span>
+                <h2 class="text-xl font-black text-slate-800 tracking-tight" x-text="role.charAt(0).toUpperCase() + role.slice(1) + ' Dashboard'"></h2>
+            </header>
+
+            <main class="flex-1 flex flex-col p-6 no-scrollbar overflow-hidden">
+                
+                <div x-show="!selectedFeature" x-transition class="grid grid-cols-3 gap-4">
+                    <template x-for="feat in features[role]">
+                        <button @click="selectedFeature = feat" class="btn-click bg-white border border-slate-200 p-4 rounded-[28px] flex flex-col items-center justify-center shadow-sm">
+                            <div class="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-2 text-purple-600 text-lg">
+                                <i class="fa-solid" :class="feat.i"></i>
+                            </div>
+                            <span class="text-[9px] font-black text-slate-600 uppercase text-center leading-tight" x-text="feat.n"></span>
+                        </button>
+                    </template>
+                </div>
+
+                
+                <div x-show="selectedFeature" x-transition class="flex flex-col h-full justify-between">
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-5 grad-purple p-6 rounded-[32px] text-white shadow-xl glow-purple">
+                            <div class="h-16 w-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-3xl border border-white/30">
+                                <i class="fa-solid" :class="selectedFeature ? selectedFeature.i : ''"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-black tracking-tighter" x-text="selectedFeature ? selectedFeature.n : ''"></h3>
+                                <p class="text-[10px] uppercase font-black opacity-70">Feature Ready</p>
+                            </div>
+                        </div>
+
+                        
+                        <div class="space-y-2">
+                            <template x-if="selectedFeature">
+                                <template x-for="sub in selectedFeature.sub">
+                                    <div @click="if(sub.toLowerCase().includes('logout')) { page='landing'; selectedFeature=null }" 
+                                         class="btn-click flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                        <span class="font-bold text-slate-700 text-sm italic" :class="sub.toLowerCase().includes('logout') ? 'text-red-600' : ''" x-text="sub"></span>
+                                        <div class="h-8 w-8 rounded-full flex items-center justify-center" :class="sub.toLowerCase().includes('logout') ? 'bg-red-50 text-red-500' : 'bg-purple-50 text-purple-600'">
+                                            <i class="fa-solid" :class="sub.toLowerCase().includes('logout') ? 'fa-right-from-bracket' : 'fa-chevron-right text-[10px]'"></i>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="pb-2">
+                        <button @click="selectedFeature = null" class="btn-click w-full py-4 grad-red text-white font-black text-xs rounded-2xl shadow-lg uppercase tracking-widest">
+                            <i class="fa-solid fa-xmark mr-2"></i> Close Menu
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+           
+            <div class="flex justify-center pb-8">
+                <button @click="page = 'landing'; selectedFeature = null" class="btn-click w-16 h-16 rounded-full grad-purple text-white nav-home-glow flex items-center justify-center hover:scale-110 transition shadow-xl">
+                    <i class="fa-solid fa-house-chimney text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
